@@ -1,0 +1,18 @@
+name: 'Run tests (ctest)'
+description: 'Run tests using ctest and produce a summary'
+inputs:
+  test-dir:
+    description: 'Directory with tests'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run tests
+      shell: bash -l {0}
+      run: |
+        echo "### Test results" >> $GITHUB_STEP_SUMMARY
+        ctest --test-dir ${{ inputs.test-dir }} -O test.log
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        awk 's;/^\[HANDLER_OUTPUT\]/{s=1}' test.log >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
